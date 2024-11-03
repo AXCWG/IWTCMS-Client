@@ -33,11 +33,18 @@ namespace ws
         {
             byte[] responseBytes = new byte[1024];
             while (true)
-            { 
-
-                int bytes = await socket.ReceiveAsync(responseBytes);
-                output.Text += Encoding.UTF8.GetString(responseBytes, 0, bytes);
-                scrollv.ScrollToEnd();
+            {
+                try
+                {
+                    int bytes = await socket!.ReceiveAsync(responseBytes);
+                    output.Text += Encoding.UTF8.GetString(responseBytes, 0, bytes);
+                    scrollv.ScrollToEnd();
+                }catch(Exception ex)
+                {
+                    output.Text += ex;
+                    break;
+                }
+                
             }
 
         }
@@ -46,18 +53,22 @@ namespace ws
         {
             try
             {
+                disconnect.IsEnabled = true;
                 host.IsEnabled = false;
                 port.IsEnabled = false;
                 password.IsEnabled = false;
                 connectbutton.IsEnabled = false;
                 command.IsEnabled = true;
                 sendbutton.IsEnabled = true;
-                socket = new Socket(IPEndPoint.Parse(host.Text).AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                await socket.ConnectAsync(IPAddress.Parse(host.Text), ((int)port.Value!.Value));
+                socket = new Socket(IPEndPoint.Parse(host.Text!).AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                await socket.ConnectAsync(IPAddress.Parse(host.Text!), ((int)port.Value!.Value));
                 
                 listen();
+
             }
             catch (Exception ex) {
+                disconnect.IsEnabled = false;
+
                 host.IsEnabled = true;
                 port.IsEnabled = true;
                 password.IsEnabled = true;
@@ -72,9 +83,23 @@ namespace ws
         private void Button_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
 
-            socket.Send(Encoding.UTF8.GetBytes(command.Text! + "\n"));
+            socket!.Send(Encoding.UTF8.GetBytes(command.Text! + "\n"));
             
 
+        }
+
+        private void Button_Click_2(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            socket!.Shutdown(SocketShutdown.Both);
+            socket.Close();
+            socket.Dispose();
+            disconnect.IsEnabled = false;
+            host.IsEnabled = true;
+            port.IsEnabled = true;
+            password.IsEnabled = true;
+            connectbutton.IsEnabled = true;
+            command.IsEnabled = false;
+            sendbutton.IsEnabled = false;
         }
     }
 }

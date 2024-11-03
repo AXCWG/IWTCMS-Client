@@ -1,14 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Logging;
+using Avalonia.Interactivity;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ws
 {
@@ -41,27 +37,50 @@ namespace ws
                     scrollv.ScrollToEnd();
                 }catch(Exception ex)
                 {
-                    output.Text += ex;
+                    output.Text += ex + "\n";
                     break;
                 }
                 
             }
 
         }
+        private void authorizeButton(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string hashedString = String.Empty;
+                byte[] sha = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(password.Text!));
+                foreach (byte thebyte in sha)
+                {
+                    hashedString += thebyte.ToString("x2");
+                }
+                socket.Send(Encoding.UTF8.GetBytes("iwtcms_login " + hashedString + "\n"));
+            }
+            catch (NullReferenceException ex)
+            {
+                output.Text += "Please connect first. \n";
+            }
+            catch (Exception ex) { 
+                output.Text += ex + "\n";
+            }
+            
+        }
         
         private async void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             try
             {
-                disconnect.IsEnabled = true;
-                host.IsEnabled = false;
-                port.IsEnabled = false;
-                password.IsEnabled = false;
-                connectbutton.IsEnabled = false;
-                command.IsEnabled = true;
-                sendbutton.IsEnabled = true;
-                socket = new Socket(IPEndPoint.Parse(host.Text!).AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                await socket.ConnectAsync(IPAddress.Parse(host.Text!), ((int)port.Value!.Value));
+
+                    disconnect.IsEnabled = true;
+                    host.IsEnabled = false;
+                    port.IsEnabled = false;
+                    connectbutton.IsEnabled = false;
+                    command.IsEnabled = true;
+                    sendbutton.IsEnabled = true;
+                    socket = new Socket(IPEndPoint.Parse(host.Text!).AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    await socket.ConnectAsync(IPAddress.Parse(host.Text!), ((int)port.Value!.Value));
+                
+                
                 
                 listen();
 
@@ -71,7 +90,6 @@ namespace ws
 
                 host.IsEnabled = true;
                 port.IsEnabled = true;
-                password.IsEnabled = true;
                 connectbutton.IsEnabled = true;
                 command.IsEnabled = false;
                 sendbutton.IsEnabled = false;
@@ -96,7 +114,6 @@ namespace ws
             disconnect.IsEnabled = false;
             host.IsEnabled = true;
             port.IsEnabled = true;
-            password.IsEnabled = true;
             connectbutton.IsEnabled = true;
             command.IsEnabled = false;
             sendbutton.IsEnabled = false;

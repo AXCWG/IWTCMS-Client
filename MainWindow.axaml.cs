@@ -1,49 +1,43 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
+using SuperSimpleTcp;
 using System;
+using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace ws
 {
     public partial class MainWindow : Window
     {
-        Socket? socket;
-        
+        SimpleTcpClient client;
 
         public MainWindow()
         {
             InitializeComponent();
-            
+
             command.KeyDown
-                += (s, e) => {
-                    if (e.Key == Avalonia.Input.Key.Return) {
+                += (s, e) =>
+                {
+                    if (e.Key == Avalonia.Input.Key.Return)
+                    {
                         Button_Click_1(null, null!);
                         command.Text = null;
                     }
                 };
-        }
-        async void listen()
-        {
-            byte[] responseBytes = new byte[1024];
-            while (true)
+            output.TextChanged += (s, e) =>
             {
-                try
-                {
-                    int bytes = await socket!.ReceiveAsync(responseBytes);
-                    output.Text += Encoding.UTF8.GetString(responseBytes, 0, bytes);
-                    scrollv.ScrollToEnd();
-                }catch(Exception ex)
-                {
-                    output.Text += ex + "\n";
-                    break;
-                }
-                
-            }
-
+                scrollv.ScrollToEnd();
+            };
         }
+
+
         private void authorizeButton(object sender, RoutedEventArgs e)
         {
             try
@@ -54,38 +48,47 @@ namespace ws
                 {
                     hashedString += thebyte.ToString("x2");
                 }
-                socket.Send(Encoding.UTF8.GetBytes("iwtcms_login " + hashedString + "\n"));
+                client.Send(Encoding.UTF8.GetBytes("iwtcms_login " + hashedString + "\n"));
             }
             catch (NullReferenceException ex)
             {
                 output.Text += "Please connect first. \n";
             }
-            catch (Exception ex) { 
+            catch (Exception ex)
+            {
                 output.Text += ex + "\n";
             }
-            
+            scrollv.ScrollToEnd();
+
         }
-        
-        private async void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+
+        private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             try
             {
 
-                    disconnect.IsEnabled = true;
-                    host.IsEnabled = false;
-                    port.IsEnabled = false;
-                    connectbutton.IsEnabled = false;
-                    command.IsEnabled = true;
-                    sendbutton.IsEnabled = true;
-                    socket = new Socket(IPEndPoint.Parse(host.Text!).AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                    await socket.ConnectAsync(IPAddress.Parse(host.Text!), ((int)port.Value!.Value));
-                
-                
-                
-                listen();
+                disconnect.IsEnabled = true;
+                host.IsEnabled = false;
+                port.IsEnabled = false;
+                connectbutton.IsEnabled = false;
+                command.IsEnabled = true;
+                sendbutton.IsEnabled = true;
+                client = new SimpleTcpClient(host.Text + ":" + port.Text);
+                client.Connect();
+                client.Events.DataReceived += (s, e) =>
+                {
+                    
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        output.Text += Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+                    });
+                };
+
+
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 disconnect.IsEnabled = false;
 
                 host.IsEnabled = true;
@@ -95,28 +98,73 @@ namespace ws
                 sendbutton.IsEnabled = false;
                 output.Text += ex + "\n";
             }
-            
+
         }
 
         private void Button_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
 
-            socket!.Send(Encoding.UTF8.GetBytes(command.Text! + "\n"));
-            
+            client.Send(command.Text! + "\n");
+
 
         }
 
         private void Button_Click_2(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            socket!.Shutdown(SocketShutdown.Both);
-            socket.Close();
-            socket.Dispose();
+            client.Disconnect();
+            client = null!;
             disconnect.IsEnabled = false;
             host.IsEnabled = true;
             port.IsEnabled = true;
             connectbutton.IsEnabled = true;
             command.IsEnabled = false;
             sendbutton.IsEnabled = false;
+        }
+        
+        private void tcpConnect(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                disconnect.IsEnabled = true;
+                host.IsEnabled = false;
+                port.IsEnabled = false;
+                connectbutton.IsEnabled = false;
+                command.IsEnabled = true;
+                sendbutton.IsEnabled = true;
+                client = new SimpleTcpClient(host.Text+":"+port.Text, true, null, null);
+                client.Settings.MutuallyAuthenticate = false;
+                
+                client.Settings.AcceptInvalidCertificates = false;
+                client.Connect();
+                client.Events.DataReceived += (s, e) =>
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        output.Text += Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+                       
+                    });
+                };
+
+
+
+            }
+            catch (Exception ex)
+            {
+                disconnect.IsEnabled = false;
+
+                host.IsEnabled = true;
+                port.IsEnabled = true;
+                connectbutton.IsEnabled = true;
+                command.IsEnabled = false;
+                sendbutton.IsEnabled = false;
+                output.Text += ex + "\n";
+            }
+        }
+
+        private void Button_PointerEntered(object? sender, Avalonia.Input.PointerEventArgs e)
+        {
+            output.Text += "Not yet done. \n";
         }
     }
 }

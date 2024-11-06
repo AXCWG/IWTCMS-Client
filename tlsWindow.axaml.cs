@@ -11,13 +11,31 @@ public static class pfxReturn
     static public bool hasEntry = false;
     static public string? Dir { get; set; }
     static public string? Password { get; set; }
+    static public bool disableCertCheck = false;
 
+    
 }
 
 
 public partial class tlsWindow : Window
 {
+    private void CheckBox_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if(CHECK.IsChecked == true)
+        {
+            pfxDir.IsEnabled = false;
+            password.IsEnabled = false;
+            pfxReturn.disableCertCheck = true; 
 
+        }
+        if (CHECK.IsChecked == false)
+        {
+            pfxDir.IsEnabled = true;
+            password.IsEnabled = true;
+            pfxReturn.disableCertCheck = false;     
+
+        }
+    }
     public static FilePickerFileType pfx
     {
         get;
@@ -52,7 +70,7 @@ public partial class tlsWindow : Window
         });
         if (files.Count == 1)
         {
-            pfxDir.Text = files[0].Path.AbsolutePath;
+            pfxDir.Text = files[0].Path.LocalPath;
         }
 
     }
@@ -67,14 +85,18 @@ public partial class tlsWindow : Window
         });
         if (files.Count == 1)
         {
-            password.Text = files[0].Path.AbsolutePath;
+            password.Text = files[0].Path.LocalPath;
         }
     }
     private void okButton(object? sender, RoutedEventArgs e)
     {
-        pfxReturn.hasEntry = true;
-        pfxReturn.Dir = pfxDir.Text;
-        pfxReturn.Password = File.ReadAllText(password.Text!);
+        if (!pfxReturn.disableCertCheck)
+        {
+            pfxReturn.hasEntry = true;
+            pfxReturn.Dir = pfxDir.Text;
+            pfxReturn.Password = File.ReadAllText(password.Text!);
+        }
+        
         Close();
     }
     private void cancelButton(object? sender, RoutedEventArgs e)

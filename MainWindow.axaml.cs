@@ -7,6 +7,9 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -32,6 +35,14 @@ namespace ws
                         command.Text = null;
                     }
                 };
+            password.KeyDown += (s, e) =>
+            {
+                if (e.Key == Avalonia.Input.Key.Return)
+                {
+                    authorizeButton(null!, null!);
+                    password.Text = null;
+                }
+            };
             output.TextChanged += (s, e) =>
             {
                 scrollv.ScrollToEnd();
@@ -90,6 +101,7 @@ namespace ws
                         output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
                     });
                 };
+                output.Text += "Connection successful\n";
 
 
 
@@ -104,7 +116,7 @@ namespace ws
                 connectbutton.IsEnabled = true;
                 command.IsEnabled = false;
                 sendbutton.IsEnabled = false;
-                output.Text += ex + "\n";
+                output.Text += $"Unsuccessful: {ex.Message}\nFull trace: \n{ex} \n";
             }
 
         }
@@ -129,15 +141,20 @@ namespace ws
 
             command.IsEnabled = false;
             sendbutton.IsEnabled = false;
+            pfxReturn.disableCertCheck = false;
+            pfxReturn.hasEntry = false;
+            output.Text += ("Disconnected. \n");
+
         }
 
         private async void tlsConnect(object? sender, RoutedEventArgs e)
         {
             var dia = new tlsWindow();
             await dia.ShowDialog(this);
-            try
+
+            if (pfxReturn.hasEntry && !pfxReturn.disableCertCheck)
             {
-                if (pfxReturn.hasEntry)
+                try
                 {
                     disconnect.IsEnabled = true;
                     host.IsEnabled = false;
@@ -163,20 +180,72 @@ namespace ws
 
                         });
                     };
+                    output.Text += "Connection successful\n";
                 }
-            }
-            catch (Exception ex)
-            {
-                disconnect.IsEnabled = false;
-                connecttls.IsEnabled = true;
-                host.IsEnabled = true;
-                port.IsEnabled = true;
-                connectbutton.IsEnabled = true;
-                command.IsEnabled = false;
-                sendbutton.IsEnabled = false;
-                output.Text += ex + "\n";
-            }
+                catch (Exception ex)
+                {
+                    disconnect.IsEnabled = false;
+                    connecttls.IsEnabled = true;
+                    host.IsEnabled = true;
+                    port.IsEnabled = true;
+                    connectbutton.IsEnabled = true;
+                    command.IsEnabled = false;
+                    sendbutton.IsEnabled = false;
+                    output.Text += $"Unsuccessful: {ex.Message}\nFull trace: \n{ex}\n";
+                }
 
+            }
+            if (pfxReturn.disableCertCheck)
+            {
+                try
+                {
+                    var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ws.cert.pfx");
+                    Directory.CreateDirectory("cert");
+                    using (FileStream file = File.Create("cert/cert.pfx"))
+                    {
+                        stream.CopyTo(file);
+                    }
+
+
+                    disconnect.IsEnabled = true;
+                    host.IsEnabled = false;
+                    port.IsEnabled = false;
+                    connectbutton.IsEnabled = false;
+                    connecttls.IsEnabled = false;
+                    command.IsEnabled = true;
+                    sendbutton.IsEnabled = true;
+                    client = new SimpleTcpClient(host.Text + ":" + port.Text, true,
+                    "cert/cert.pfx", "0000"
+                    );
+                    client.Settings.MutuallyAuthenticate = false;
+
+                    client.Settings.AcceptInvalidCertificates = true;
+                    client.Connect();
+                    client.Events.DataReceived += (s, e) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
+
+                        });
+                    };
+                    output.Text += "Connection successful\n";
+
+                }
+                catch (Exception ex)
+                {
+                    disconnect.IsEnabled = false;
+                    connecttls.IsEnabled = true;
+                    host.IsEnabled = true;
+                    port.IsEnabled = true;
+                    connectbutton.IsEnabled = true;
+                    command.IsEnabled = false;
+                    sendbutton.IsEnabled = false;
+                    output.Text += $"Unsuccessful: {ex.Message}\nFull trace: \n{ex}\n";
+                }
+
+
+            }
         }
         private void changeWrap(object? sender, RoutedEventArgs e)
         {
@@ -191,6 +260,7 @@ namespace ws
                 output.TextWrapping = Avalonia.Media.TextWrapping.NoWrap;
             }
         }
-
     }
+
+
 }

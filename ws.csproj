@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -12,8 +12,15 @@
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	  
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="cert.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="cert.pfx" />
+  </ItemGroup>
 
   <ItemGroup>
+	  
     <PackageReference Include="Avalonia" Version="11.2.0" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0" />
@@ -22,5 +29,6 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.0" />
     <PackageReference Include="SuperSimpleTcp" Version="3.0.14" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 </Project>

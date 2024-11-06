@@ -1,35 +1,32 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
-        x:Class="ws.tlsWindow" Width="400" Height="200"
-        Title="tlsWindow">
-  <Grid Margin="10" ShowGridLines="True"  RowDefinitions="*,*,.5*">
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200" x:Class="ws.tlsWindow" Width="400" Height="200" Title="tlsWindow">
+  <Grid Margin="10" ShowGridLines="True" RowDefinitions="*,*,.5*">
     <StackPanel Grid.Row="0">
-      <Label>Directory of *.pfx</Label>
-      <Grid ColumnDefinitions="10*,*">
-              <TextBox x:Name="pfxDir">
-                
-                </TextBox>
-                <Button Content="…" Click="pfxDirFinder" Grid.Column="1"/>
-
-        </Grid>
-      </StackPanel>
-      <StackPanel Grid.Row="1">
-      <Label>Password</Label>
-      <Grid ColumnDefinitions="10*,*">
-              <TextBox x:Name="password">
-                
-                </TextBox>
-                <Button Content="…" Click="passwordFinder" Grid.Column="1"/>
-
-        </Grid>
-      </StackPanel>
-      <Grid Grid.Row="2" ColumnDefinitions="*,*">
-        <Button Content="Ok" Grid.Column="0"/>
-      <Button  Content="Cancel" Grid.Column="1"/>
-        </Grid>
-      
+      <Grid ColumnDefinitions="*,*" ShowGridLines="True">
+        <StackPanel>
+          <Label>Directory of *.pfx</Label>
+          <Grid ColumnDefinitions="5*,*">
+            <TextBox x:Name="pfxDir"></TextBox>
+            <Button Content="…" Click="pfxDirFinder" Grid.Column="1"/>
+          </Grid>
+        </StackPanel>
+        <CheckBox Content="Don&apos;t check cert" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+      </Grid>
+    </StackPanel>
+    <StackPanel Grid.Row="1">
+      <Grid ColumnDefinitions="*,*">
+        <StackPanel>
+          <Label>Password</Label>
+          <Grid ColumnDefinitions="5*,*">
+            <TextBox x:Name="password"></TextBox>
+            <Button Content="…" Click="passwordFinder" Grid.Column="1"/>
+          </Grid>
+        </StackPanel>
+        
+      </Grid>
+    </StackPanel>
+    <Grid Grid.Row="2" ColumnDefinitions="*,*">
+      <Button Content="Ok" Grid.Column="0" Click="okButton"/>
+      <Button Content="Cancel" Grid.Column="1" Click="cancelButton"/>
+    </Grid>
   </Grid>
 </Window>

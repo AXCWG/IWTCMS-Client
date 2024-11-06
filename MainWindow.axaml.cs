@@ -11,6 +11,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 
 namespace ws
 {
@@ -34,7 +35,9 @@ namespace ws
             output.TextChanged += (s, e) =>
             {
                 scrollv.ScrollToEnd();
+                // output.CaretIndex = int.MaxValue;
             };
+
         }
 
 
@@ -60,6 +63,7 @@ namespace ws
                 output.Text += ex + "\n";
             }
             scrollv.ScrollToEnd();
+            // output.CaretIndex = int.MaxValue;
 
         }
 
@@ -72,13 +76,15 @@ namespace ws
                 host.IsEnabled = false;
                 port.IsEnabled = false;
                 connectbutton.IsEnabled = false;
+                connecttls.IsEnabled = false;
+
                 command.IsEnabled = true;
                 sendbutton.IsEnabled = true;
                 client = new SimpleTcpClient(host.Text + ":" + port.Text);
                 client.Connect();
                 client.Events.DataReceived += (s, e) =>
                 {
-                    
+
                     Dispatcher.UIThread.Post(() =>
                     {
                         output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
@@ -91,6 +97,7 @@ namespace ws
             catch (Exception ex)
             {
                 disconnect.IsEnabled = false;
+                connecttls.IsEnabled = true;
 
                 host.IsEnabled = true;
                 port.IsEnabled = true;
@@ -118,60 +125,72 @@ namespace ws
             host.IsEnabled = true;
             port.IsEnabled = true;
             connectbutton.IsEnabled = true;
+            connecttls.IsEnabled = true;
+
             command.IsEnabled = false;
             sendbutton.IsEnabled = false;
         }
-        
-        private void tlsConnect(object? sender, RoutedEventArgs e)
+
+        private async void tlsConnect(object? sender, RoutedEventArgs e)
         {
-            // try
-            // {
+            var dia = new tlsWindow();
+            await dia.ShowDialog(this);
+            try
+            {
+                if (pfxReturn.hasEntry)
+                {
+                    disconnect.IsEnabled = true;
+                    host.IsEnabled = false;
+                    port.IsEnabled = false;
+                    connectbutton.IsEnabled = false;
+                    connecttls.IsEnabled = false;
+                    command.IsEnabled = true;
+                    sendbutton.IsEnabled = true;
+                    client = new SimpleTcpClient(host.Text + ":" + port.Text, true,
+                    pfxReturn.Dir
+                    ,
+                    pfxReturn.Password
+                    );
+                    client.Settings.MutuallyAuthenticate = false;
 
-            //     disconnect.IsEnabled = true;
-            //     host.IsEnabled = false;
-            //     port.IsEnabled = false;
-            //     connectbutton.IsEnabled = false;
-            //     command.IsEnabled = true;
-            //     sendbutton.IsEnabled = true;
-            //     client = new SimpleTcpClient(host.Text+":"+port.Text, true,
-            //     "Not yet done, but i know after giving it a pfx it'd work. "
-            //     , 
-            //     "passcode"
-            //     );
-            //     client.Settings.MutuallyAuthenticate = false;
-                
-            //     client.Settings.AcceptInvalidCertificates = true;
-            //     client.Connect();
-            //     client.Events.DataReceived += (s, e) =>
-            //     {
-            //         Dispatcher.UIThread.Post(() =>
-            //         {
-            //             output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
-                       
-            //         });
-            //     };
+                    client.Settings.AcceptInvalidCertificates = false;
+                    client.Connect();
+                    client.Events.DataReceived += (s, e) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
 
+                        });
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                disconnect.IsEnabled = false;
+                connecttls.IsEnabled = true;
+                host.IsEnabled = true;
+                port.IsEnabled = true;
+                connectbutton.IsEnabled = true;
+                command.IsEnabled = false;
+                sendbutton.IsEnabled = false;
+                output.Text += ex + "\n";
+            }
 
+        }
+        private void changeWrap(object? sender, RoutedEventArgs e)
+        {
 
-            // }
-            // catch (Exception ex)
-            // {
-            //     disconnect.IsEnabled = false;
+            if (checkbox.IsChecked!.Value)
+            {
+                output.TextWrapping = Avalonia.Media.TextWrapping.Wrap;
 
-            //     host.IsEnabled = true;
-            //     port.IsEnabled = true;
-            //     connectbutton.IsEnabled = true;
-            //     command.IsEnabled = false;
-            //     sendbutton.IsEnabled = false;
-            //     output.Text += ex + "\n";
-            // }
-            var dia = new tlsWindow(); 
-            dia.ShowDialog(this);
+            }
+            if (!checkbox.IsChecked.Value)
+            {
+                output.TextWrapping = Avalonia.Media.TextWrapping.NoWrap;
+            }
         }
 
-        private void Button_PointerEntered(object? sender, Avalonia.Input.PointerEventArgs e)
-        {
-            output.Text += "Not yet done. \n";
-        }
     }
 }

@@ -16,7 +16,7 @@ namespace ws
 {
     public partial class MainWindow : Window
     {
-        SimpleTcpClient client;
+        SimpleTcpClient? client;
 
         public MainWindow()
         {
@@ -48,10 +48,11 @@ namespace ws
                 {
                     hashedString += thebyte.ToString("x2");
                 }
-                client.Send(Encoding.UTF8.GetBytes("iwtcms_login " + hashedString + "\n"));
+                client!.Send(Encoding.UTF8.GetBytes("iwtcms_login " + hashedString + "\n"));
             }
             catch (NullReferenceException ex)
             {
+                output.Text += $"{ex.Message}\n";
                 output.Text += "Please connect first. \n";
             }
             catch (Exception ex)
@@ -80,7 +81,7 @@ namespace ws
                     
                     Dispatcher.UIThread.Post(() =>
                     {
-                        output.Text += Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+                        output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
                     });
                 };
 
@@ -104,14 +105,14 @@ namespace ws
         private void Button_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
 
-            client.Send(command.Text! + "\n");
+            client!.Send(command.Text! + "\n");
 
 
         }
 
         private void Button_Click_2(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            client.Disconnect();
+            client!.Disconnect();
             client = null!;
             disconnect.IsEnabled = false;
             host.IsEnabled = true;
@@ -121,7 +122,7 @@ namespace ws
             sendbutton.IsEnabled = false;
         }
         
-        private void tcpConnect(object? sender, RoutedEventArgs e)
+        private void tlsConnect(object? sender, RoutedEventArgs e)
         {
             try
             {
@@ -132,16 +133,20 @@ namespace ws
                 connectbutton.IsEnabled = false;
                 command.IsEnabled = true;
                 sendbutton.IsEnabled = true;
-                client = new SimpleTcpClient(host.Text+":"+port.Text, true, null, null);
+                client = new SimpleTcpClient(host.Text+":"+port.Text, true,
+                "Not yet done, but i know after giving it a pfx it'd work. "
+                , 
+                "passcode"
+                );
                 client.Settings.MutuallyAuthenticate = false;
                 
-                client.Settings.AcceptInvalidCertificates = false;
+                client.Settings.AcceptInvalidCertificates = true;
                 client.Connect();
                 client.Events.DataReceived += (s, e) =>
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        output.Text += Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+                        output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
                        
                     });
                 };

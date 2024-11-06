@@ -16,7 +16,7 @@ namespace ws
 {
     public partial class MainWindow : Window
     {
-        SimpleTcpClient? client;
+        public static SimpleTcpClient? client;
 
         public MainWindow()
         {
@@ -124,47 +124,49 @@ namespace ws
         
         private void tlsConnect(object? sender, RoutedEventArgs e)
         {
-            try
-            {
+            // try
+            // {
 
-                disconnect.IsEnabled = true;
-                host.IsEnabled = false;
-                port.IsEnabled = false;
-                connectbutton.IsEnabled = false;
-                command.IsEnabled = true;
-                sendbutton.IsEnabled = true;
-                client = new SimpleTcpClient(host.Text+":"+port.Text, true,
-                "Not yet done, but i know after giving it a pfx it'd work. "
-                , 
-                "passcode"
-                );
-                client.Settings.MutuallyAuthenticate = false;
+            //     disconnect.IsEnabled = true;
+            //     host.IsEnabled = false;
+            //     port.IsEnabled = false;
+            //     connectbutton.IsEnabled = false;
+            //     command.IsEnabled = true;
+            //     sendbutton.IsEnabled = true;
+            //     client = new SimpleTcpClient(host.Text+":"+port.Text, true,
+            //     "Not yet done, but i know after giving it a pfx it'd work. "
+            //     , 
+            //     "passcode"
+            //     );
+            //     client.Settings.MutuallyAuthenticate = false;
                 
-                client.Settings.AcceptInvalidCertificates = true;
-                client.Connect();
-                client.Events.DataReceived += (s, e) =>
-                {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
+            //     client.Settings.AcceptInvalidCertificates = true;
+            //     client.Connect();
+            //     client.Events.DataReceived += (s, e) =>
+            //     {
+            //         Dispatcher.UIThread.Post(() =>
+            //         {
+            //             output.Text += Encoding.UTF8.GetString(e.Data.Array!, 0, e.Data.Count);
                        
-                    });
-                };
+            //         });
+            //     };
 
 
 
-            }
-            catch (Exception ex)
-            {
-                disconnect.IsEnabled = false;
+            // }
+            // catch (Exception ex)
+            // {
+            //     disconnect.IsEnabled = false;
 
-                host.IsEnabled = true;
-                port.IsEnabled = true;
-                connectbutton.IsEnabled = true;
-                command.IsEnabled = false;
-                sendbutton.IsEnabled = false;
-                output.Text += ex + "\n";
-            }
+            //     host.IsEnabled = true;
+            //     port.IsEnabled = true;
+            //     connectbutton.IsEnabled = true;
+            //     command.IsEnabled = false;
+            //     sendbutton.IsEnabled = false;
+            //     output.Text += ex + "\n";
+            // }
+            var dia = new tlsWindow(); 
+            dia.ShowDialog(this);
         }
 
         private void Button_PointerEntered(object? sender, Avalonia.Input.PointerEventArgs e)

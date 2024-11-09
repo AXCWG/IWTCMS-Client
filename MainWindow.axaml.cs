@@ -195,7 +195,7 @@ namespace ws
                 }
 
             }
-            if (pfxReturn.disableCertCheck)
+            if (pfxReturn.disableCertCheck && pfxReturn.hasEntry)
             {
                 try
                 {

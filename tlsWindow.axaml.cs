@@ -1,9 +1,11 @@
+using System;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
+using MsBox.Avalonia;
 
 namespace ws;
 public static class pfxReturn
@@ -13,7 +15,7 @@ public static class pfxReturn
     static public string? Password { get; set; }
     static public bool disableCertCheck = false;
 
-    
+
 }
 
 
@@ -21,18 +23,18 @@ public partial class tlsWindow : Window
 {
     private void CheckBox_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if(CHECK.IsChecked == true)
+        if (CHECK.IsChecked == true)
         {
             pfxDir.IsEnabled = false;
             password.IsEnabled = false;
-            pfxReturn.disableCertCheck = true; 
+            pfxReturn.disableCertCheck = true;
 
         }
         if (CHECK.IsChecked == false)
         {
             pfxDir.IsEnabled = true;
             password.IsEnabled = true;
-            pfxReturn.disableCertCheck = false;     
+            pfxReturn.disableCertCheck = false;
 
         }
     }
@@ -90,14 +92,22 @@ public partial class tlsWindow : Window
     }
     private void okButton(object? sender, RoutedEventArgs e)
     {
-        if (!pfxReturn.disableCertCheck)
+        try
         {
             pfxReturn.hasEntry = true;
-            pfxReturn.Dir = pfxDir.Text;
-            pfxReturn.Password = File.ReadAllText(password.Text!);
+            if (!pfxReturn.disableCertCheck)
+            {
+
+                pfxReturn.Dir = pfxDir.Text;
+                pfxReturn.Password = File.ReadAllText(password.Text!);
+            }
+
+            Close();
+        }catch(Exception ex){
+            MessageBoxManager.GetMessageBoxStandard("Error", $"Failed: {ex.Message}\nFull back trace: \n{ex}").ShowAsync();
         }
-        
-        Close();
+
+
     }
     private void cancelButton(object? sender, RoutedEventArgs e)
     {

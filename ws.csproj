@@ -10,6 +10,8 @@
 	  <PublishTrimmed>true</PublishTrimmed>
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishSingleFile>true</PublishSingleFile>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
 	  
   </PropertyGroup>
   <ItemGroup>
@@ -17,6 +19,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="cert.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +33,7 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
     <PackageReference Include="SuperSimpleTcp" Version="3.0.14" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>

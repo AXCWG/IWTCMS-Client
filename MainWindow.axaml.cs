@@ -4,17 +4,9 @@ using Avalonia.Threading;
 using SuperSimpleTcp;
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Security;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Security.Authentication;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 
 namespace ws
 {
@@ -200,8 +192,8 @@ namespace ws
                 try
                 {
                     var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ws.cert.pfx");
-                    Directory.CreateDirectory("cert");
-                    using (FileStream file = File.Create("cert/cert.pfx"))
+                    Directory.CreateDirectory($"{AppDomain.CurrentDomain.BaseDirectory}/cert");
+                    using (FileStream file = File.Create($"{AppDomain.CurrentDomain.BaseDirectory}/cert/cert.pfx"))
                     {
                         stream.CopyTo(file);
                     }
@@ -215,7 +207,7 @@ namespace ws
                     command.IsEnabled = true;
                     sendbutton.IsEnabled = true;
                     client = new SimpleTcpClient(host.Text + ":" + port.Text, true,
-                    "cert/cert.pfx", "0000"
+                    $"{AppDomain.CurrentDomain.BaseDirectory}/cert/cert.pfx", "0000"
                     );
                     client.Settings.MutuallyAuthenticate = false;
 
@@ -259,6 +251,11 @@ namespace ws
             {
                 output.TextWrapping = Avalonia.Media.TextWrapping.NoWrap;
             }
+        }
+
+        private void ShowAbout(object? sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 

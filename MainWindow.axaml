@@ -10,6 +10,7 @@
             <Menu.Styles></Menu.Styles>
             <MenuItem Header="_File">
                 <MenuItem Header="_New Config" Click="AddConfigMenuItemOnClick" />
+                <MenuItem Header="_Quit" Click="QuitMenuItemOnClick"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_About" Click="ShowAbout"></MenuItem>

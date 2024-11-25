@@ -20,20 +20,6 @@ namespace ws
         [STAThread]
         public static void Main(string[] args)
         {
-            // Test
-            //
-            // Task t = new Task(() =>
-            // {
-            //     while (true)
-            //     {
-            //         Console.WriteLine(Singletons.configs[0].host);
-            //         Thread.Sleep(100);
-            //     }
-            //    
-            // });
-            // t.Start();
-            
-
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }

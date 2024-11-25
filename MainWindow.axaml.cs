@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -51,6 +52,11 @@ namespace ws
             AddConfig addConfig = new AddConfig();
             await addConfig.ShowDialog(this); 
             Refresh();
+        }
+
+        private void QuitMenuItemOnClick(object? sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

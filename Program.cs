@@ -1,10 +1,14 @@
 ﻿using Avalonia;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ws
 {
@@ -17,20 +21,7 @@ namespace ws
         public static void Main(string[] args)
         {
             BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
-
-    //        var names =
-    //System
-    //.Reflection
-    //.Assembly
-    //.GetExecutingAssembly()
-    //.GetManifestResourceNames();
-
-    //        foreach (var name in names)
-    //        {
-    //            Console.WriteLine(name);
-    //        }
-
+                .StartWithClassicDesktopLifetime(args);
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.

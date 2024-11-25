@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	  <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-	  <PublishTrimmed>true</PublishTrimmed>
+	  <PublishTrimmed>false</PublishTrimmed>
 	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <PublishSingleFile>true</PublishSingleFile>
@@ -19,6 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="cert.pfx" />
+    <None Remove="icon.webp" />
+    <AvaloniaResource Include="icon.webp" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="icon.ico" />

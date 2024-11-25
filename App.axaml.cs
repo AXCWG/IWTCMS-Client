@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -16,6 +19,10 @@ namespace ws
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
+                desktop.Exit += (s, e) =>
+                {
+                    File.WriteAllText("./config.json", JsonSerializer.Serialize(Singletons.configs, new JsonSerializerOptions() { IncludeFields = true }));
+                };
             }
 
             base.OnFrameworkInitializationCompleted();

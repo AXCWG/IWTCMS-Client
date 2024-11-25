@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150" Width="400" Height="150" 
+        x:Class="ws.About"
+         Padding="10" >
+    <DockPanel>
+        <Image DockPanel.Dock="Left" Source="icon.webp" Width="100" >
+        </Image>
+
+        <StackPanel VerticalAlignment="Center">
+
+            <TextBlock HorizontalAlignment="Center">
+                I-Want-To-Control-My-Server
+            </TextBlock>
+            <TextBlock HorizontalAlignment="Center">
+                <HyperlinkButton NavigateUri="https://github.com/AXCWG/IWTCMS-Client">
+                    Github Page
+                </HyperlinkButton>
+            </TextBlock>
+            <TextBlock HorizontalAlignment="Center">
+                
+                ©Andy Xie Creativity Workgroup 2024
+            </TextBlock>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

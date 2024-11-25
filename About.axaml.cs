@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace ws;
 
-public partial class About : Window
+public partial class About : UserControl
 {
     public About()
     {

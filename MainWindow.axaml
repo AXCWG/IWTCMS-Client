@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="500" Width="300" Height="500"
         x:Class="ws.MainWindow"
-        Title="IWTCMS" Padding="0,0,0,0" MinHeight="500" MinWidth="300" Icon="icon.webp">
+        Title="IWTCMS" Padding="0,0,0,0" MinHeight="500" MinWidth="300" Icon="icon.ico">
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File">

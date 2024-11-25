@@ -20,7 +20,9 @@
   <ItemGroup>
     <EmbeddedResource Include="cert.pfx" />
     <None Remove="icon.webp" />
-    <EmbeddedResource Include="icon.webp" />
+    <EmbeddedResource Include="icon.webp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="icon.ico" />

@@ -38,5 +38,6 @@
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
     <PackageReference Include="SuperSimpleTcp" Version="3.0.14" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="Websocket.Client" Version="5.1.2" />
   </ItemGroup>
 </Project>

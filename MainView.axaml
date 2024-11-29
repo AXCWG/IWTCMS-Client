@@ -17,11 +17,11 @@
                              VerticalContentAlignment="Center">
                     </TextBox>
                     <NumericUpDown Watermark="Port" x:Name="port" AllowSpin="True" Maximum="65535" Value=""
-                                   FormatString="0" Minimum="1" Grid.Column="1">
+                                   FormatString="0" Minimum="1" Grid.Column="1" ValueChanged="Port_OnValueChanged">
                     </NumericUpDown>
                 </Grid>
-                <TextBox Watermark="Username" x:Name="Username" Margin="0 10 0 0 "></TextBox>
-                <TextBox PasswordChar="*" Watermark="Password" x:Name="password" Margin="0 10 0 0"></TextBox>
+                <TextBox Watermark="Username" x:Name="Username" Margin="0 10 0 0 " TextChanged="Username_OnTextChanged"></TextBox>
+                <TextBox PasswordChar="*" Watermark="Password" x:Name="password" Margin="0 10 0 0" TextChanged="Password_OnTextChanged"></TextBox>
                 <Grid ColumnDefinitions="*,*">
                     <Button Margin="0 10 0 0 " FontSize="9" VerticalContentAlignment="Center" Click="Connect"
                             x:Name="connectbutton">
@@ -34,9 +34,9 @@
                     </Button>
                 </Grid>
                 <Button Margin=" 0 10 0 0" IsEnabled="False" Click="Disconnect" x:Name="disconnect">Disconnect</Button>
-               
+
                 <CheckBox Content="Text wrap" Margin="0 5 0 0" Click="ChangeWrap" x:Name="checkbox" />
-                
+
             </StackPanel>
             <DockPanel Grid.Row="1" VerticalAlignment="Stretch">
                 <TextBox DockPanel.Dock="Top" Watermark="Commands" x:Name="command" IsEnabled="False"></TextBox>

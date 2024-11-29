@@ -18,7 +18,9 @@ class Singletons
                 {
                     Header = "default",
                     Host = "127.0.0.1",
-                    Port = 25566, Password = String.Empty,
+                    Port = 25566,
+                    Password = "iwtcms",
+                    Username = "admin",
                 }
             };
 }
@@ -28,5 +30,6 @@ public class Config
     public string? Header;
     public string? Host;
     public int? Port;
+    public string? Username;
     public string? Password;
 }
